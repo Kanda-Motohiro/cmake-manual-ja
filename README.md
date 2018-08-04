@@ -1,0 +1,1 @@
+# cmake-manual-ja
