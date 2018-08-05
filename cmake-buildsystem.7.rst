@@ -2,15 +2,12 @@
 
 以下は、 git tag v3.12.0, ２０１８年８月時点の、cmake-buildsystem(7) の、
 kanda.motohiro@gmail.com による抄訳です。BSD 3-Clause のもとで公開します。
-ビルドは、CMakeCache.txt の、SPHINX_HTML:BOOL=ON にして、 make したら、
+rst ファイルのまま github に置くため、原文とレイアウトなどは異なります。
+HTML へのビルドは、CMakeCache.txt の、SPHINX_HTML:BOOL=ON にして、 make したら、
 Utilities/Sphinx/html 以下にできました。
 
 cmake-buildsystem(7)
 ********************
-
-.. only:: html
-
-   .. contents::
 
 Introduction
 ============
@@ -69,8 +66,6 @@ Binary Library Types
 Normal Libraries
 ^^^^^^^^^^^^^^^^
 
-By default, the :command:`add_library` command defines a static library,
-unless a type is specified.  A type may be specified when using the command:
 型が指定されていないならば、:command:`add_library`  コマンドは、
 デフォルトで静的ライブラリを定義します。
 
@@ -138,10 +133,10 @@ Object Libraries
 
   add_executable(test_exe $<TARGET_OBJECTS:archive> test.cpp)
 
-The link (or archiving) step of those other targets will use the object
-files collection in addition to those from their own sources.
+他のターゲットでのリンク（あるいはアーカイブ）ステップは、そこで指定されたソースの他に、
+オブジェクトファイルの集まりを使います。
 
-Alternatively, object libraries may be linked into other targets:
+あるいは、オブジェクトライブラリを、他のターゲットにリンクすることもできます。
 
 .. code-block:: cmake
 
@@ -153,11 +148,10 @@ Alternatively, object libraries may be linked into other targets:
   add_executable(test_exe test.cpp)
   target_link_libraries(test_exe archive)
 
-The link (or archiving) step of those other targets will use the object
-files from object libraries that are *directly* linked.  Additionally,
-usage requirements of the object libraries will be honored when compiling
-sources in those other targets.  Furthermore, those usage requirements
-will propagate transitively to dependents of those other targets.
+他のターゲットでのリンク（あるいはアーカイブ）ステップは、オブジェクトライブラリ
+にあるオブジェクトファイルを使い、それは *directly* にリンクされます。さらに、
+前記、他のターゲットのソースをコンパイルする時に、オブジェクトライブラリの使用要件は順守されます。
+さらに、この使用要件は、前記、他のターゲットが依存するものへと推移的に伝搬します。
 
 Object libraries may not be used as the ``TARGET`` in a use of the
 :command:`add_custom_command(TARGET)` command signature.  However,
@@ -167,13 +161,13 @@ or :command:`file(GENERATE)` by using ``$<TARGET_OBJECTS:objlib>``.
 Build Specification and Usage Requirements
 ==========================================
 
-The :command:`target_include_directories`, :command:`target_compile_definitions`
-and :command:`target_compile_options` commands specify the build specifications
-and the usage requirements of binary targets.  The commands populate the
+:command:`target_include_directories`, :command:`target_compile_definitions`
+and :command:`target_compile_options` コマンドは、バイナリターゲットのビルド指定と
+使用要件を指定します。これらのコマンドはそれぞれ、
 :prop_tgt:`INCLUDE_DIRECTORIES`, :prop_tgt:`COMPILE_DEFINITIONS` and
-:prop_tgt:`COMPILE_OPTIONS` target properties respectively, and/or the
+:prop_tgt:`COMPILE_OPTIONS` ターゲット属性と／あるいは
 :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`, :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`
-and :prop_tgt:`INTERFACE_COMPILE_OPTIONS` target properties.
+and :prop_tgt:`INTERFACE_COMPILE_OPTIONS` ターゲット属性を設定します。
 
 Each of the commands has a ``PRIVATE``, ``PUBLIC`` and ``INTERFACE`` mode.  The
 ``PRIVATE`` mode populates only the non-``INTERFACE_`` variant of the target
@@ -202,23 +196,24 @@ packages for redistribution.
 Target Properties
 -----------------
 
-The contents of the :prop_tgt:`INCLUDE_DIRECTORIES`,
-:prop_tgt:`COMPILE_DEFINITIONS` and :prop_tgt:`COMPILE_OPTIONS` target
-properties are used appropriately when compiling the source files of a
-binary target.
+バイナリターゲットのソースファイルをコンパイルする時に、
+:prop_tgt:`INCLUDE_DIRECTORIES`,
+:prop_tgt:`COMPILE_DEFINITIONS` and :prop_tgt:`COMPILE_OPTIONS` ターゲット属性
+の内容が適切に使われます。
 
-Entries in the :prop_tgt:`INCLUDE_DIRECTORIES` are added to the compile line
-with ``-I`` or ``-isystem`` prefixes and in the order of appearance in the
-property value.
+:prop_tgt:`INCLUDE_DIRECTORIES` 内のエントリは、コンパイル行中に、
+``-I`` or ``-isystem`` プレフィックスをつけて、属性値に現れる順番に
+追加されます。
 
-Entries in the :prop_tgt:`COMPILE_DEFINITIONS` are prefixed with ``-D`` or
-``/D`` and added to the compile line in an unspecified order.  The
-:prop_tgt:`DEFINE_SYMBOL` target property is also added as a compile
-definition as a special convenience case for ``SHARED`` and ``MODULE``
-library targets.
+:prop_tgt:`COMPILE_DEFINITIONS` 内のエントリは、コンパイル行中に、
+``-D`` or ``/D`` プレフィックスをつけて、追加されます。順序は不定です。
+``SHARED`` and ``MODULE`` ライブラリターゲットの場合、特別に便宜を図るため、
+:prop_tgt:`DEFINE_SYMBOL` ターゲット属性も、コンパイル定義として追加されます。
 
-Entries in the :prop_tgt:`COMPILE_OPTIONS` are escaped for the shell and added
-in the order of appearance in the property value.  Several compile options have
+:prop_tgt:`COMPILE_OPTIONS` 内のエントリは、シェルエスケープされて、
+属性値に現れる順番に追加されます
+
+Several compile options have
 special separate handling, such as :prop_tgt:`POSITION_INDEPENDENT_CODE`.
 
 The contents of the :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`,
@@ -478,13 +473,11 @@ any of the other properties.
 Property Origin Debugging
 -------------------------
 
-Because build specifications can be determined by dependencies, the lack of
-locality of code which creates a target and code which is responsible for
-setting build specifications may make the code more difficult to reason about.
-:manual:`cmake(1)` provides a debugging facility to print the origin of the
-contents of properties which may be determined by dependencies.  The properties
-which can be debugged are listed in the
-:variable:`CMAKE_DEBUG_TARGET_PROPERTIES` variable documentation:
+ビルド指定は依存関係で決まることがあるため、ターゲットを作るコードと、ビルド指定を設定する
+役割を持つコードが離れていると、コードを理解するのがより困難になることがあります。
+:manual:`cmake(1)` は、依存関係によって決定されることのある属性の内容の起源を表示するデバッグ機能を提供します。
+デバッグできる属性の一覧は、 :variable:`CMAKE_DEBUG_TARGET_PROPERTIES` 
+変数の文書にあります。
 
 .. code-block:: cmake
 
@@ -752,15 +745,14 @@ contains a cycle.  :manual:`cmake(1)` issues a diagnostic in this case.
 Output Artifacts
 ----------------
 
-The buildsystem targets created by the :command:`add_library` and
-:command:`add_executable` commands create rules to create binary outputs.
-The exact output location of the binaries can only be determined at
-generate-time because it can depend on the build-configuration and the
-link-language of linked dependencies etc.  ``TARGET_FILE``,
-``TARGET_LINKER_FILE`` and related expressions can be used to access the
-name and location of generated binaries.  These expressions do not work
-for ``OBJECT`` libraries however, as there is no single file generated
-by such libraries which is relevant to the expressions.
+:command:`add_library` and :command:`add_executable` コマンドが作る
+ビルドシステムターゲットは、バイナリ出力を作る規則を作ります。
+バイナリの正確な出力場所は、生成時にしか決められません。それはビルド構成とリンク依存関係
+のリンク言語などに依存するからです。
+生成されるバイナリの名前と場所をアクセスするために、 ``TARGET_FILE``,
+``TARGET_LINKER_FILE`` そして関連する式を使うことができます。
+しかしこれらの式は、``OBJECT`` ライブラリには使えません。式が指す、そのライブラリが生成する、
+単一のファイルというものは無いからです。
 
 There are three kinds of output artifacts that may be build by targets
 as detailed in the following sections.  Their classification differs
