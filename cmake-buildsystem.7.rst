@@ -2,7 +2,7 @@
 
 以下は、 git tag v3.12.0, ２０１８年８月時点の、cmake-buildsystem(7) の、
 kanda.motohiro@gmail.com による抄訳です。BSD 3-Clause のもとで公開します。
-rst ファイルのまま github に置くため、原文とレイアウトなどは異なります。
+rst ファイルのまま github に置くため、原文とレイアウトは異なります。
 HTML へのビルドは、CMakeCache.txt の、SPHINX_HTML:BOOL=ON にして、 make したら、
 Utilities/Sphinx/html 以下にできました。
 
@@ -169,11 +169,11 @@ and :command:`target_compile_options` コマンドは、バイナリターゲッ
 :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`, :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`
 and :prop_tgt:`INTERFACE_COMPILE_OPTIONS` ターゲット属性を設定します。
 
-Each of the commands has a ``PRIVATE``, ``PUBLIC`` and ``INTERFACE`` mode.  The
-``PRIVATE`` mode populates only the non-``INTERFACE_`` variant of the target
-property and the ``INTERFACE`` mode populates only the ``INTERFACE_`` variants.
-The ``PUBLIC`` mode populates both variants of the respective target property.
-Each command may be invoked with multiple uses of each keyword:
+これらのコマンドは、 ``PRIVATE``, ``PUBLIC`` and ``INTERFACE`` モードを持ちます。
+``PRIVATE`` モードは、 ``INTERFACE_`` がついていないターゲット属性だけを設定し、
+``INTERFACE`` モードは、 ``INTERFACE_`` がついている方だけを設定します。
+``PUBLIC`` モードは、指定されたターゲット属性の、両方の変種を設定します。
+一つのコマンドで、これらキーワードを複数回使ってもかまいません。
 
 .. code-block:: cmake
 
@@ -216,14 +216,14 @@ Target Properties
 Several compile options have
 special separate handling, such as :prop_tgt:`POSITION_INDEPENDENT_CODE`.
 
-The contents of the :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`,
+prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`,
 :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS` and
-:prop_tgt:`INTERFACE_COMPILE_OPTIONS` target properties are
-*Usage Requirements* -- they specify content which consumers
-must use to correctly compile and link with the target they appear on.
-For any binary target, the contents of each ``INTERFACE_`` property on
-each target specified in a :command:`target_link_libraries` command is
-consumed:
+:prop_tgt:`INTERFACE_COMPILE_OPTIONS` 
+ターゲット属性の内容は、*Usage Requirements* 、使用要件、です。
+-- それは、それが指定されているターゲットの利用者が、正しくコンパイルし、ターゲットにリンクするために、
+使わなくてはいけない内容を指定します。 
+全てのバイナリターゲットで、 :command:`target_link_libraries` 
+コマンドに指定された全てのターゲットにある ``INTERFACE_`` 属性の全ての内容が使われます。
 
 .. code-block:: cmake
 
