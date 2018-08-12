@@ -53,10 +53,10 @@ Binary Executables
 
   add_executable(mytool mytool.cpp)
 
-Commands such as :command:`add_custom_command`, which generates rules to be
-run at build time can transparently use an :prop_tgt:`EXECUTABLE <TYPE>`
-target as a ``COMMAND`` executable.  The buildsystem rules will ensure that
-the executable is built before attempting to run the command.
+ビルド時に実行される規則を生成する  :command:`add_custom_command` のようなコマンドは、
+``COMMAND`` 実行可能ファイルとして、 :prop_tgt:`EXECUTABLE <TYPE>` ターゲットを
+透過的に使うことができます。
+ビルドシステム規則は、そのコマンドを実行しようとする前に、実行可能ファイルがビルドされることを保証します。
 
 Binary Library Types
 --------------------
@@ -66,7 +66,7 @@ Binary Library Types
 Normal Libraries
 ^^^^^^^^^^^^^^^^
 
-型が指定されていないならば、:command:`add_library`  コマンドは、
+型が指定されていないならば、 :command:`add_library`  コマンドは、
 デフォルトで静的ライブラリを定義します。
 
 .. code-block:: cmake
@@ -153,10 +153,12 @@ Object Libraries
 前記、他のターゲットのソースをコンパイルする時に、オブジェクトライブラリの使用要件は順守されます。
 さらに、この使用要件は、前記、他のターゲットが依存するものへと推移的に伝搬します。
 
-Object libraries may not be used as the ``TARGET`` in a use of the
-:command:`add_custom_command(TARGET)` command signature.  However,
-the list of objects can be used by :command:`add_custom_command(OUTPUT)`
-or :command:`file(GENERATE)` by using ``$<TARGET_OBJECTS:objlib>``.
+:command:`add_custom_command(TARGET)` コマンドシグネチャにおいて、オブジェクト
+ライブラリを、``TARGET`` として使うことはできません。
+しかし、 ``$<TARGET_OBJECTS:objlib>`` を使って、オブジェクトのリストを、
+ :command:`add_custom_command(OUTPUT)`
+or :command:`file(GENERATE)` 
+で使うことができます。
 
 Build Specification and Usage Requirements
 ==========================================
@@ -182,16 +184,13 @@ and :prop_tgt:`INTERFACE_COMPILE_OPTIONS` ターゲット属性を設定しま�
     INTERFACE USING_ARCHIVE_LIB
   )
 
-Note that usage requirements are not designed as a way to make downstreams
-use particular :prop_tgt:`COMPILE_OPTIONS` or
-:prop_tgt:`COMPILE_DEFINITIONS` etc for convenience only.  The contents of
-the properties must be **requirements**, not merely recommendations or
-convenience.
+使用要件は、ダウンストリームが、特定の :prop_tgt:`COMPILE_OPTIONS` or
+:prop_tgt:`COMPILE_DEFINITIONS` などを使うようにする便利な方法として設計されたのではありません。
+属性の内容は、推奨や便宜ではなく、 **requirements** でなくてはいけません。
 
-See the :ref:`Creating Relocatable Packages` section of the
-:manual:`cmake-packages(7)` manual for discussion of additional care
-that must be taken when specifying usage requirements while creating
-packages for redistribution.
+再配布のためのパッケージを作る時に使用要件を指定する時に注意しなくてはいけないことについての議論は、
+:manual:`cmake-packages(7)` マニュアルの :ref:`Creating Relocatable Packages`
+セクションを参照ください。
 
 Target Properties
 -----------------
@@ -213,8 +212,8 @@ Target Properties
 :prop_tgt:`COMPILE_OPTIONS` 内のエントリは、シェルエスケープされて、
 属性値に現れる順番に追加されます
 
-Several compile options have
-special separate handling, such as :prop_tgt:`POSITION_INDEPENDENT_CODE`.
+:prop_tgt:`POSITION_INDEPENDENT_CODE` のように、
+特別な扱いが必要なコンパイルオプションがあります。
 
 prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`,
 :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS` and
@@ -243,25 +242,23 @@ prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`,
   # executable sources are compiled with -DUSING_ARCHIVE_LIB.
   target_link_libraries(consumer archive)
 
-Because it is common to require that the source directory and corresponding
-build directory are added to the :prop_tgt:`INCLUDE_DIRECTORIES`, the
-:variable:`CMAKE_INCLUDE_CURRENT_DIR` variable can be enabled to conveniently
-add the corresponding directories to the :prop_tgt:`INCLUDE_DIRECTORIES` of
-all targets.  The variable :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE`
-can be enabled to add the corresponding directories to the
-:prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` of all targets.  This makes use of
-targets in multiple different directories convenient through use of the
-:command:`target_link_libraries` command.
-
+ソースディレクトリと対応するビルドディレクトリが :prop_tgt:`INCLUDE_DIRECTORIES`
+に加えられることを要求するのは一般的なので、
+:variable:`CMAKE_INCLUDE_CURRENT_DIR`  変数を有効にして、全てのターゲットの 
+:prop_tgt:`INCLUDE_DIRECTORIES` に、対応するディレクトリを加えることができます。
+:variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` 変数を有効にして、全てのターゲットの 
+:prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` に、対応するディレクトリを加えることができます。
+これは、 :command:`target_link_libraries` コマンドを、複数の異なるディレクトリに
+あるターゲットに対して使う時に便利です。
 
 .. _`Target Usage Requirements`:
 
 Transitive Usage Requirements
 -----------------------------
 
-The usage requirements of a target can transitively propagate to dependents.
-The :command:`target_link_libraries` command has ``PRIVATE``,
-``INTERFACE`` and ``PUBLIC`` keywords to control the propagation.
+ターゲットの使用要件は、それが依存しているものに推移的に伝搬することがあります。
+:command:`target_link_libraries` コマンドは、``PRIVATE``,
+``INTERFACE`` and ``PUBLIC`` キーワードを持ち、伝搬を制御します。
 
 .. code-block:: cmake
 
@@ -281,20 +278,19 @@ The :command:`target_link_libraries` command has ``PRIVATE``,
   # consumer is compiled with -DUSING_ARCHIVE_LIB
   target_link_libraries(consumer archiveExtras)
 
-Because ``archive`` is a ``PUBLIC`` dependency of ``archiveExtras``, the
-usage requirements of it are propagated to ``consumer`` too.  Because
-``serialization`` is a ``PRIVATE`` dependency of ``archiveExtras``, the usage
-requirements of it are not propagated to ``consumer``.
+``archive`` は、 ``archiveExtras`` の、 ``PUBLIC`` 依存関係ですから、
+その使用要件は ``consumer`` にも伝搬されます。
+``serialization`` は、 ``archiveExtras`` の、 ``PRIVATE`` 依存関係ですから、
+その使用要件は ``consumer`` には伝搬されません。
 
-Generally, a dependency should be specified in a use of
-:command:`target_link_libraries` with the ``PRIVATE`` keyword if it is used by
-only the implementation of a library, and not in the header files.  If a
-dependency is additionally used in the header files of a library (e.g. for
-class inheritance), then it should be specified as a ``PUBLIC`` dependency.
-A dependency which is not used by the implementation of a library, but only by
-its headers should be specified as an ``INTERFACE`` dependency.  The
-:command:`target_link_libraries` command may be invoked with multiple uses of
-each keyword:
+一般的に、依存関係は、それが、ヘッダファイルにおいてではなく、そのライブラリの実装で使われるだけならば、
+``PRIVATE`` キーワードを持つ :command:`target_link_libraries` を使って指定される
+べきです。
+もし依存関係がさらに、そのライブラリのヘッダファイルにおいても使われるならば（例えば、クラス継承）、
+それは ``PUBLIC`` 依存関係として指定されるべきです。
+ライブラリの実装で使われず、ヘッダファイルでだけ使われる依存関係は、 ``INTERFACE`` 依存関係
+として指定されるべきです。
+:command:`target_link_libraries` コマンドは、キーワードを複数使って呼ぶこともできます。
 
 .. code-block:: cmake
 
@@ -303,19 +299,17 @@ each keyword:
     PRIVATE serialization
   )
 
-Usage requirements are propagated by reading the ``INTERFACE_`` variants
-of target properties from dependencies and appending the values to the
-non-``INTERFACE_`` variants of the operand.  For example, the
-:prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` of dependencies is read and
-appended to the :prop_tgt:`INCLUDE_DIRECTORIES` of the operand.  In cases
-where order is relevant and maintained, and the order resulting from the
-:command:`target_link_libraries` calls does not allow correct compilation,
-use of an appropriate command to set the property directly may update the
-order.
+依存しているもののターゲット属性にある ``INTERFACE_`` 変種を読んで、
+その値を、オペランドの ``INTERFACE_`` でない変種に追加することによって伝搬されます。
+例えば、依存しているものの :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` 
+が読まれ、オペランドの :prop_tgt:`INCLUDE_DIRECTORIES` に加えられます。
+順序が重要で、維持されている時に、 :command:`target_link_libraries` 
+呼び出しの結果作られる順序が、正しくコンパイルしない時は、
+適切なコマンドを使って、属性を直接設定して、順序を変更できます。
 
-For example, if the linked libraries for a target must be specified
-in the order ``lib1`` ``lib2`` ``lib3`` , but the include directories must
-be specified in the order ``lib3`` ``lib1`` ``lib2``:
+例えば、ターゲットにリンクされるライブラリが、 ``lib1`` ``lib2`` ``lib3`` の順序で
+指定されなくてはならず、インクルードディレクトリが ``lib3`` ``lib1`` ``lib2`` 
+の順序で指定されなくてはいけないならば：
 
 .. code-block:: cmake
 
@@ -323,23 +317,22 @@ be specified in the order ``lib3`` ``lib1`` ``lib2``:
   target_include_directories(myExe
     PRIVATE $<TARGET_PROPERTY:lib3,INTERFACE_INCLUDE_DIRECTORIES>)
 
-Note that care must be taken when specifying usage requirements for targets
-which will be exported for installation using the :command:`install(EXPORT)`
-command.  See :ref:`Creating Packages` for more.
+:command:`install(EXPORT)` コマンドを使って、インストール時にエクスポートされるターゲット
+に対する使用要件を指定するときには、注意が必要です。詳しくは、 :ref:`Creating Packages` を参照ください。
 
 .. _`Compatible Interface Properties`:
 
 Compatible Interface Properties
 -------------------------------
 
-Some target properties are required to be compatible between a target and
-the interface of each dependency.  For example, the
-:prop_tgt:`POSITION_INDEPENDENT_CODE` target property may specify a
-boolean value of whether a target should be compiled as
-position-independent-code, which has platform-specific consequences.
-A target may also specify the usage requirement
-:prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` to communicate that
-consumers must be compiled as position-independent-code.
+ターゲット属性によっては、ターゲットと依存するものそれぞれのインタフェースが
+互換でなければいけないものがあります。
+例えば、 :prop_tgt:`POSITION_INDEPENDENT_CODE`  ターゲット属性は、
+ターゲットが位置非依存コードとしてコンパイルされるかどうかを指定するブール値を取ります。
+それは、プラットフォーム固有の結果をもたらします。
+さらに、ターゲットは、 :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE`
+使用要件を指定して、消費者が位置非依存コードとしてコンパイルされなくてはいけないことを
+指定することができます。
 
 .. code-block:: cmake
 
@@ -352,10 +345,10 @@ consumers must be compiled as position-independent-code.
   add_executable(exe2 exe2.cpp)
   target_link_libraries(exe2 lib1)
 
-Here, both ``exe1`` and ``exe2`` will be compiled as position-independent-code.
-``lib1`` will also be compiled as position-independent-code because that is the
-default setting for ``SHARED`` libraries.  If dependencies have conflicting,
-non-compatible requirements :manual:`cmake(1)` issues a diagnostic:
+ここで、 ``exe1`` and ``exe2`` の両方は、位置非依存コードとしてコンパイルされます。
+``lib1`` も、位置非依存コードとしてコンパイルされます。それが、 ``SHARED`` ライブラリ
+のデフォルト設定だからです。
+依存関係が、競合し、互換でない要件を持つなら、 :manual:`cmake(1)` は、診断メッセージを出します。
 
 .. code-block:: cmake
 
@@ -502,11 +495,10 @@ the new extreme.
 Build Specification with Generator Expressions
 ----------------------------------------------
 
-Build specifications may use
-:manual:`generator expressions <cmake-generator-expressions(7)>` containing
-content which may be conditional or known only at generate-time.  For example,
-the calculated "compatible" value of a property may be read with the
-``TARGET_PROPERTY`` expression:
+ビルド指定は、条件によって決まる、あるいは、生成時までわからない内容を持つ、
+:manual:`generator expressions <cmake-generator-expressions(7)>` 
+を使うことができます。例えば、計算される、属性の "compatible" 値は、
+``TARGET_PROPERTY`` 式で読むことができます。
 
 .. code-block:: cmake
 
@@ -523,11 +515,10 @@ the calculated "compatible" value of a property may be read with the
       CONTAINER_SIZE=$<TARGET_PROPERTY:CONTAINER_SIZE_REQUIRED>
   )
 
-In this case, the ``exe1`` source files will be compiled with
-``-DCONTAINER_SIZE=200``.
+この場合、 ``exe1`` ソースファイルは、 ``-DCONTAINER_SIZE=200`` 付きで
+コンパイルされます。
 
-Configuration determined build specifications may be conveniently set using
-the ``CONFIG`` generator expression.
+Configuration によって決まるビルド指定は、``CONFIG`` generator 式を使って設定できます。
 
 .. code-block:: cmake
 
@@ -540,11 +531,11 @@ being built.  In the presence of :prop_tgt:`IMPORTED` targets, the content of
 :prop_tgt:`MAP_IMPORTED_CONFIG_DEBUG <MAP_IMPORTED_CONFIG_<CONFIG>>` is also
 accounted for by this expression.
 
-Some buildsystems generated by :manual:`cmake(1)` have a predetermined
-build-configuration set in the :variable:`CMAKE_BUILD_TYPE` variable.  The
-buildsystem for the IDEs such as Visual Studio and Xcode are generated
-independent of the build-configuration, and the actual build configuration
-is not known until build-time.  Therefore, code such as
+:manual:`cmake(1)`  が生成するビルドシステムによっては、あらかじめ決められた
+ビルド configuration が、 :variable:`CMAKE_BUILD_TYPE` 変数に設定されていることが
+あります。Visual Studio and Xcode のような IDE のためのビルドシステムは、
+ビルド configuration と無関係に生成されます。そして、実際の ビルド configuration 
+は、ビルド時までわかりません。なので、以下のようなコードは、
 
 .. code-block:: cmake
 
@@ -553,15 +544,13 @@ is not known until build-time.  Therefore, code such as
     target_compile_definitions(exe1 PRIVATE DEBUG_BUILD)
   endif()
 
-may appear to work for ``Makefile`` based and ``Ninja`` generators, but is not
-portable to IDE generators.  Additionally, the :prop_tgt:`IMPORTED`
-configuration-mappings are not accounted for with code like this, so it should
-be avoided.
+``Makefile`` ベースと ``Ninja`` generator では動くかもしれませんが、
+IDE generator には移植可能ではありません。
+このようなコードでは、configuration マッピングは期待できないので、使うべきではありません。
 
-The unary ``TARGET_PROPERTY`` generator expression and the ``TARGET_POLICY``
-generator expression are evaluated with the consuming target context.  This
-means that a usage requirement specification may be evaluated differently based
-on the consumer:
+単項の ``TARGET_PROPERTY`` generator 式と ``TARGET_POLICY`` generator 式は、
+それを消費するターゲットのコンテキストで評価されます。
+これは、使用要件の指定は、消費者によって異なって評価されることがあることを意味します。
 
 .. code-block:: cmake
 
@@ -580,10 +569,11 @@ on the consumer:
   add_library(shared_lib shared_lib.cpp)
   target_link_libraries(shared_lib lib1)
 
-The ``exe1`` executable will be compiled with ``-DLIB1_WITH_EXE``, while the
-``shared_lib`` shared library will be compiled with ``-DLIB1_WITH_SHARED_LIB``
-and ``-DCONSUMER_CMP0041_NEW``, because policy :policy:`CMP0041` is
-``NEW`` at the point where the ``shared_lib`` target is created.
+``exe1`` 実行可能ファイルは、 ``-DLIB1_WITH_EXE`` 付きでコンパイルされ、
+``shared_lib``  共有ライブラリは  ``-DLIB1_WITH_SHARED_LIB``
+and ``-DCONSUMER_CMP0041_NEW`` 付きでコンパイルされます。
+``shared_lib`` ターゲットが作られた時に、:policy:`CMP0041` ポリシーは ``NEW`` 
+だからです。
 
 The ``BUILD_INTERFACE`` expression wraps requirements which are only used when
 consumed from a target in the same buildsystem, or when consumed from a target
@@ -764,48 +754,42 @@ systems including Cygwin are DLL platforms.
 Runtime Output Artifacts
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-A *runtime* output artifact of a buildsystem target may be:
+ビルドシステムターゲットの *runtime* 出力結果は以下のどれかです。
 
-* The executable file (e.g. ``.exe``) of an executable target
-  created by the :command:`add_executable` command.
+* 実行可能ターゲットの実行可能ファイル (e.g. ``.exe``) 
+  これは、 :command:`add_executable` コマンドで作られます。
 
-* On DLL platforms: the executable file (e.g. ``.dll``) of a shared
-  library target created by the :command:`add_library` command
-  with the ``SHARED`` option.
+* DLL プラットフォームでは：共有ライブラリターゲットの実行可能ファイル (e.g. ``.dll``)
+  これは、 ``SHARED`` オプション付きの :command:`add_library` コマンドで作られます。
 
-The :prop_tgt:`RUNTIME_OUTPUT_DIRECTORY` and :prop_tgt:`RUNTIME_OUTPUT_NAME`
-target properties may be used to control runtime output artifact locations
-and names in the build tree.
+:prop_tgt:`RUNTIME_OUTPUT_DIRECTORY` and :prop_tgt:`RUNTIME_OUTPUT_NAME`
+ターゲット属性を使って、実行時の、ビルドツリー内での出力結果の場所と名前を制御できます。
 
 .. _`Library Output Artifacts`:
 
 Library Output Artifacts
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-A *library* output artifact of a buildsystem target may be:
+ビルドシステムターゲットの  *library* 出力結果は以下のどれかです。
 
-* The loadable module file (e.g. ``.dll`` or ``.so``) of a module
-  library target created by the :command:`add_library` command
-  with the ``MODULE`` option.
+* モジュールライブラリターゲットのローダブルモジュールファイル (e.g. ``.dll`` or ``.so``) of a module
+  これは、 ``MODULE`` オプション付きの :command:`add_library` コマンドで作られます。
 
-* On non-DLL platforms: the shared library file (e.g. ``.so`` or ``.dylib``)
-  of a shared library target created by the :command:`add_library`
-  command with the ``SHARED`` option.
+* DLL でないプラットフォームでは： 共有ライブラリターゲットの共有ライブラリファイル (e.g. ``.so`` or ``.dylib``)
+  これは、 ``SHARED`` オプション付きの :command:`add_library` コマンドで作られます。
 
 The :prop_tgt:`LIBRARY_OUTPUT_DIRECTORY` and :prop_tgt:`LIBRARY_OUTPUT_NAME`
-target properties may be used to control library output artifact locations
-and names in the build tree.
+ターゲット属性を使って、実行時の、ビルドツリー内でのライブラリ出力結果の場所と名前を制御できます。
 
 .. _`Archive Output Artifacts`:
 
 Archive Output Artifacts
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-An *archive* output artifact of a buildsystem target may be:
+ビルドシステムターゲットの *archive* 出力結果は以下のどれかです。
 
-* The static library file (e.g. ``.lib`` or ``.a``) of a static
-  library target created by the :command:`add_library` command
-  with the ``STATIC`` option.
+* 静的ライブラリターゲットの静的ライブラリファイル (e.g. ``.lib`` or ``.a``) of a static
+  これは、 ``STATIC`` オプション付きの :command:`add_library` コマンドで作られます。
 
 * On DLL platforms: the import library file (e.g. ``.lib``) of a shared
   library target created by the :command:`add_library` command
@@ -817,52 +801,51 @@ An *archive* output artifact of a buildsystem target may be:
   when its :prop_tgt:`ENABLE_EXPORTS` target property is set.
 
 The :prop_tgt:`ARCHIVE_OUTPUT_DIRECTORY` and :prop_tgt:`ARCHIVE_OUTPUT_NAME`
-target properties may be used to control archive output artifact locations
-and names in the build tree.
+ターゲット属性を使って、実行時の、ビルドツリー内でのアーカイブ出力結果の場所と名前を制御できます。
 
 Directory-Scoped Commands
 -------------------------
 
-The :command:`target_include_directories`,
+:command:`target_include_directories`,
 :command:`target_compile_definitions` and
-:command:`target_compile_options` commands have an effect on only one
-target at a time.  The commands :command:`add_compile_definitions`,
-:command:`add_compile_options` and :command:`include_directories` have
-a similar function, but operate at directory scope instead of target
-scope for convenience.
+:command:`target_compile_options`  コマンドは、一度に一つのターゲット
+にだけ、影響します。
+:command:`add_compile_definitions`,
+:command:`add_compile_options` and :command:`include_directories` 
+は類似の機能を持ちますが、ターゲットスコープではなく、ディレクトリのスコープで
+はたらきます。
 
 Pseudo Targets
 ==============
 
-Some target types do not represent outputs of the buildsystem, but only inputs
-such as external dependencies, aliases or other non-build artifacts.  Pseudo
-targets are not represented in the generated buildsystem.
+あるターゲット型は、ビルドシステムの出力を表さず、外部の依存関係、別名、あるいは
+それ以外のビルド出力ではない入力を表します。擬似ターゲットは生成されたビルドシステム内では表されません。
 
 .. _`Imported Targets`:
 
 Imported Targets
 ----------------
 
-An :prop_tgt:`IMPORTED` target represents a pre-existing dependency.  Usually
-such targets are defined by an upstream package and should be treated as
-immutable. After declaring an :prop_tgt:`IMPORTED` target one can adjust its
-target properties by using the customary commands such as
+:prop_tgt:`IMPORTED`  ターゲットは既存の依存関係を表します。通常、そのような
+ターゲットはアップストリームのパッケージによって定義され、変更不可能として
+扱われるべきです。
+:prop_tgt:`IMPORTED` ターゲットを宣言した後、そのターゲット属性は、
 :command:`target_compile_definitions`, :command:`target_include_directories`,
-:command:`target_compile_options` or :command:`target_link_libraries` just like
-with any other regular target.
+:command:`target_compile_options` or :command:`target_link_libraries` 
+のような、customary コマンドで変更できます。これは、他の通常ターゲットと同じです。
 
-:prop_tgt:`IMPORTED` targets may have the same usage requirement properties
-populated as binary targets, such as
+:prop_tgt:`IMPORTED` ターゲットは、
 :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`,
 :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`,
 :prop_tgt:`INTERFACE_COMPILE_OPTIONS`,
 :prop_tgt:`INTERFACE_LINK_LIBRARIES`, and
-:prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE`.
+:prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE`
+のような、バイナリターゲットと同じ使用要件を持つことができます。
 
-The :prop_tgt:`LOCATION` may also be read from an IMPORTED target, though there
-is rarely reason to do so.  Commands such as :command:`add_custom_command` can
-transparently use an :prop_tgt:`IMPORTED` :prop_tgt:`EXECUTABLE <TYPE>` target
-as a ``COMMAND`` executable.
+:prop_tgt:`IMPORTED` ターゲットから、 :prop_tgt:`LOCATION` を読むこともできますが、
+そうする理由はほぼありません。
+:command:`add_custom_command`  のようなコマンドは、``COMMAND`` 実行可能ファイルとして、
+:prop_tgt:`IMPORTED` :prop_tgt:`EXECUTABLE <TYPE>`  を透過的に使うことができます。
 
 The scope of the definition of an :prop_tgt:`IMPORTED` target is the directory
 where it was defined.  It may be accessed and used from subdirectories, but
