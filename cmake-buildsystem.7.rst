@@ -483,14 +483,12 @@ Property Origin Debugging
   )
   add_executable(exe1 exe1.cpp)
 
-In the case of properties listed in :prop_tgt:`COMPATIBLE_INTERFACE_BOOL` or
-:prop_tgt:`COMPATIBLE_INTERFACE_STRING`, the debug output shows which target
-was responsible for setting the property, and which other dependencies also
-defined the property.  In the case of
+:prop_tgt:`COMPATIBLE_INTERFACE_BOOL` or
+:prop_tgt:`COMPATIBLE_INTERFACE_STRING` にリストされた属性の場合、デバッグ出力は
+どのターゲットがその属性を設定する役割を果たしたか、そして、その属性を定義した依存関係が他にあったかを示します。
 :prop_tgt:`COMPATIBLE_INTERFACE_NUMBER_MAX` and
-:prop_tgt:`COMPATIBLE_INTERFACE_NUMBER_MIN`, the debug output shows the
-value of the property from each dependency, and whether the value determines
-the new extreme.
+:prop_tgt:`COMPATIBLE_INTERFACE_NUMBER_MIN` の場合、デバッグ出力は
+それぞれの依存関係に由来する属性値と、その値が新しい限界値を決めたかを示します。
 
 Build Specification with Generator Expressions
 ----------------------------------------------
@@ -526,10 +524,10 @@ Configuration によって決まるビルド指定は、``CONFIG`` generator 式
       $<$<CONFIG:Debug>:DEBUG_BUILD>
   )
 
-The ``CONFIG`` parameter is compared case-insensitively with the configuration
-being built.  In the presence of :prop_tgt:`IMPORTED` targets, the content of
-:prop_tgt:`MAP_IMPORTED_CONFIG_DEBUG <MAP_IMPORTED_CONFIG_<CONFIG>>` is also
-accounted for by this expression.
+``CONFIG`` パラメタは、ビルドされている configuration と、大文字小文字の違いを無視して
+比較されます。 :prop_tgt:`IMPORTED` ターゲットがある場合、
+:prop_tgt:`MAP_IMPORTED_CONFIG_DEBUG <MAP_IMPORTED_CONFIG_<CONFIG>>`
+の内容も、評価されます。
 
 :manual:`cmake(1)`  が生成するビルドシステムによっては、あらかじめ決められた
 ビルド configuration が、 :variable:`CMAKE_BUILD_TYPE` 変数に設定されていることが
@@ -575,12 +573,12 @@ and ``-DCONSUMER_CMP0041_NEW`` 付きでコンパイルされます。
 ``shared_lib`` ターゲットが作られた時に、:policy:`CMP0041` ポリシーは ``NEW`` 
 だからです。
 
-The ``BUILD_INTERFACE`` expression wraps requirements which are only used when
-consumed from a target in the same buildsystem, or when consumed from a target
-exported to the build directory using the :command:`export` command.  The
-``INSTALL_INTERFACE`` expression wraps requirements which are only used when
-consumed from a target which has been installed and exported with the
-:command:`install(EXPORT)` command:
+``BUILD_INTERFACE`` 式は、同じビルドシステムにあるターゲットによって消費される時と、
+:command:`export` コマンドを使ってビルドディレクトリにエクスポートされるターゲットに
+よって消費される時にだけ使われる要件をラップします。
+``INSTALL_INTERFACE`` 式は、 :command:`install(EXPORT)`  コマンドによって
+インストールされエクスポートされたターゲットよって消費される時にだけ使われる
+要件をラップします。
 
 .. code-block:: cmake
 
@@ -597,11 +595,12 @@ consumed from a target which has been installed and exported with the
   add_executable(exe1 exe1.cpp)
   target_link_libraries(exe1 ClimbingStats)
 
-In this case, the ``exe1`` executable will be compiled with
-``-DClimbingStats_FROM_BUILD_LOCATION``.  The exporting commands generate
-:prop_tgt:`IMPORTED` targets with either the ``INSTALL_INTERFACE`` or the
-``BUILD_INTERFACE`` omitted, and the ``*_INTERFACE`` marker stripped away.
-A separate project consuming the ``ClimbingStats`` package would contain:
+この場合、 ``exe1`` 実行可能ファイルファイルは、
+``-DClimbingStats_FROM_BUILD_LOCATION`` 付きでコンパイルされます。
+エクスポートするコマンドは、 ``INSTALL_INTERFACE`` あるいは 
+``BUILD_INTERFACE`` が除かれ、 ``*_INTERFACE`` マーカーが取り除かれた
+:prop_tgt:`IMPORTED` ターゲットを生成します。
+``ClimbingStats`` パッケージを消費する独立したプロジェクトは、以下を含むでしょう：
 
 .. code-block:: cmake
 
@@ -610,11 +609,13 @@ A separate project consuming the ``ClimbingStats`` package would contain:
   add_executable(Downstream main.cpp)
   target_link_libraries(Downstream Upstream::ClimbingStats)
 
-Depending on whether the ``ClimbingStats`` package was used from the build
-location or the install location, the ``Downstream`` target would be compiled
-with either ``-DClimbingStats_FROM_BUILD_LOCATION`` or
-``-DClimbingStats_FROM_INSTALL_LOCATION``.  For more about packages and
-exporting see the :manual:`cmake-packages(7)` manual.
+``ClimbingStats`` パッケージがビルド位置から使われるか、インストール位置から使われるかによって、
+``Downstream`` ターゲットは、 
+``-DClimbingStats_FROM_BUILD_LOCATION`` あるいは
+``-DClimbingStats_FROM_INSTALL_LOCATION``
+のどちらか付きでコンパイルされます。
+パッケージとエクスポートについて詳しくは、:manual:`cmake-packages(7)` マニュアルを
+参照ください。
 
 .. _`Include Directories and Usage Requirements`:
 
