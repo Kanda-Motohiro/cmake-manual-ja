@@ -179,9 +179,9 @@ is not ``NEW``, they are also appended to the
 Linking Object Libraries
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-:ref:`Object Libraries` may be used as the ``<target>`` (first) argument
-of ``target_link_libraries`` to specify dependencies of their sources
-on other libraries.  For example, the code
+:ref:`Object Libraries` を、 ``target_link_libraries`` の（最初の）
+``<target>`` 引数にして、そのソースが他のライブラリに依存していることを示すために
+使うことができます。例えば、以下のコード
 
 .. code-block:: cmake
 
@@ -192,35 +192,35 @@ on other libraries.  For example, the code
   target_compile_definitions(obj PUBLIC OBJ)
   target_link_libraries(obj PUBLIC A)
 
-compiles ``obj.c`` with ``-DA -DOBJ`` and establishes usage requirements
-for ``obj`` that propagate to its dependents.
+は、``obj.c`` を ``-DA -DOBJ`` 付きでコンパイルし、 ``obj`` の使用要件を確立します。
+それは、それに依存しているものに伝搬します。
 
-Normal libraries and executables may link to :ref:`Object Libraries`
-to get their objects and usage requirements.  Continuing the above
-example, the code
+通常のライブラリと実行可能ファイルは、 :ref:`Object Libraries` にリンクして、
+そのオブジェクトと使用要件を得ることができます。前記の例を続けると、以下のコード
 
 .. code-block:: cmake
 
   add_library(B SHARED b.c)
   target_link_libraries(B PUBLIC obj)
 
-compiles ``b.c`` with ``-DA -DOBJ``, creates shared library ``B``
-with object files from ``b.c`` and ``obj.c``, and links ``B`` to ``A``.
-Furthermore, the code
+は、``b.c`` を ``-DA -DOBJ`` 付きでコンパイルし、``b.c`` と ``obj.c`` から
+得られるオブジェクトファイルで共用ライブラリ ``B`` を作ります。
+そして、``B`` を ``A`` にリンクします。
+さらに以下のコード
 
 .. code-block:: cmake
 
   add_executable(main main.c)
   target_link_libraries(main B)
 
-compiles ``main.c`` with ``-DA -DOBJ`` and links executable ``main``
-to ``B`` and ``A``.  The object library's usage requirements are
-propagated transitively through ``B``, but its object files are not.
+は、``main.c`` を ``-DA -DOBJ`` 付きでコンパイルし、実行可能ファイル ``main`` を
+``B`` と ``A`` にリンクします。
+オブジェクトライブラリの使用要件は、 ``B`` を通して推移的に伝搬しますが、
+そのオブジェクトファイルは伝搬しません。
 
-:ref:`Object Libraries` may "link" to other object libraries to get
-usage requirements, but since they do not have a link step nothing
-is done with their object files.  Continuing from the above example,
-the code:
+:ref:`Object Libraries` を他のライブラリに、「リンク」して、使用要件を
+得ることはできますが、それはリンクステップを持たないので、そのオブジェクトファイルに対しては、
+何も行われません。前記の例を続けると、以下のコード
 
 .. code-block:: cmake
 
@@ -230,24 +230,23 @@ the code:
   add_executable(main2 main2.c)
   target_link_libraries(main2 obj2)
 
-compiles ``obj2.c`` with ``-DA -DOBJ``, creates executable ``main2``
-with object files from ``main2.c`` and ``obj2.c``, and links ``main2``
-to ``A``.
+は、``obj2.c`` を ``-DA -DOBJ`` 付きでコンパイルして、
+``main2.c`` と ``obj2.c`` から得られるオブジェクトファイルで ``main2`` 実行可能ファイル
+を作り、 ``main2`` を ``A`` にリンクします。
 
-In other words, when :ref:`Object Libraries` appear in a target's
-:prop_tgt:`INTERFACE_LINK_LIBRARIES` property they will be
-treated as :ref:`Interface Libraries`, but when they appear in
-a target's :prop_tgt:`LINK_LIBRARIES` property their object files
-will be included in the link too.
+言葉を変えて言えば、 :ref:`Object Libraries` がターゲットの
+:prop_tgt:`INTERFACE_LINK_LIBRARIES` 属性に現れる時、それは、
+:ref:`Interface Libraries` として扱われます。しかし、それがターゲットの
+:prop_tgt:`LINK_LIBRARIES` 属性に現れる時、そのオブジェクトファイルも
+リンクに含まれます。
 
 Cyclic Dependencies of Static Libraries
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The library dependency graph is normally acyclic (a DAG), but in the case
-of mutually-dependent ``STATIC`` libraries CMake allows the graph to
-contain cycles (strongly connected components).  When another target links
-to one of the libraries, CMake repeats the entire connected component.
-For example, the code
+ライブラリの依存関係グラフは、通常は循環なし（DAG）です。しかし、相互に依存する
+``STATIC`` ライブラリの場合、CMake はグラフが循環（強く結合したコンポーネント）を持つことを許します。
+他のターゲットがそのライブラリの一つにリンクする場合、CMake は結合したコンポーネント全体を
+繰り返します。例えば、以下のコードは、
 
 .. code-block:: cmake
 
@@ -258,13 +257,13 @@ For example, the code
   add_executable(main main.c)
   target_link_libraries(main A)
 
-links ``main`` to ``A B A B``.  While one repetition is usually
-sufficient, pathological object file and symbol arrangements can require
-more.  One may handle such cases by using the
-:prop_tgt:`LINK_INTERFACE_MULTIPLICITY` target property or by manually
-repeating the component in the last ``target_link_libraries`` call.
-However, if two archives are really so interdependent they should probably
-be combined into a single archive, perhaps by using :ref:`Object Libraries`.
+``main`` を ``A B A B`` にリンクします。普通は一度の繰り返しで十分ですが、
+悲劇的なオブジェクトファイルとシンボルの配置はそれ以上を要求することがあります。
+そのような場合は、 :prop_tgt:`LINK_INTERFACE_MULTIPLICITY` ターゲット属性を使うか、
+最後の ``target_link_libraries`` 呼び出しのコンポーネントを手作業で繰り返すことで
+対処することができます。
+しかし、もし二つのアーカイブが本当にそのように相互依存しているならば、それらは、
+:ref:`Object Libraries` を使ってもよいですが、一つのアーカイブに結合するべきです。
 
 Creating Relocatable Packages
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
