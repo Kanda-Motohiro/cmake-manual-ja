@@ -1,5 +1,3 @@
-.. cmake-manual-description: CMake Buildsystem Reference
-
 以下は、 git tag v3.12.0, ２０１８年８月時点の、cmake-buildsystem(7) の、
 kanda.motohiro@gmail.com による抄訳です。BSD 3-Clause のもとで公開します。
 rst ファイルのまま github に置くため、原文とレイアウトは異なります。
@@ -21,13 +19,12 @@ CMake をベースとするビルドシステムは、高レベルの論理的�
 Binary Targets
 ==============
 
-実行可能ファイルとライブラリは、:command:`add_executable` と 
+実行可能ファイルとライブラリは、 :command:`add_executable` と 
 :command:`add_library` コマンドで定義します。
 この結果できるバイナリファイルは、目的のプラットフォームにとって適切な
 プレフィックスとサフィックスを持ちます。
-バイナリターゲットの間の依存関係は、:command:`target_link_libraries` 
+バイナリターゲットの間の依存関係は、 :command:`target_link_libraries` 
 コマンドで表現します。
-
 
 .. code-block:: cmake
 
@@ -186,7 +183,7 @@ and :prop_tgt:`INTERFACE_COMPILE_OPTIONS` ターゲット属性を設定しま�
 
 使用要件は、ダウンストリームが、特定の :prop_tgt:`COMPILE_OPTIONS` or
 :prop_tgt:`COMPILE_DEFINITIONS` などを使うようにする便利な方法として設計されたのではありません。
-属性の内容は、推奨や便宜ではなく、 **requirements** でなくてはいけません。
+属性の内容は、推奨や便宜ではなく、 **要件** でなくてはいけません。
 
 再配布のためのパッケージを作る時に使用要件を指定する時に注意しなくてはいけないことについての議論は、
 :manual:`cmake-packages(7)` マニュアルの :ref:`Creating Relocatable Packages`
@@ -622,10 +619,8 @@ and ``-DCONSUMER_CMP0041_NEW`` 付きでコンパイルされます。
 Include Directories and Usage Requirements
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Include directories require some special consideration when specified as usage
-requirements and when used with generator expressions.  The
-:command:`target_include_directories` command accepts both relative and
-absolute include directories:
+インクルードディレクトリは、使用要件として指定する時と、generator 式で使う時には、いくらかの特殊な考慮が必要です。
+:command:`target_include_directories` コマンドは、インクルードディレクトリの相対と絶対の両方の指定が可能です。
 
 .. code-block:: cmake
 
@@ -635,21 +630,18 @@ absolute include directories:
     relative/path
   )
 
-Relative paths are interpreted relative to the source directory where the
-command appears.  Relative paths are not allowed in the
-:prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` of :prop_tgt:`IMPORTED` targets.
+相対パスは、そのコマンドが現れたソースディレクトリに相対的に評価されます。
+相対パスは、 :prop_tgt:`IMPORTED` ターゲットの
+:prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` には使えません。
 
-In cases where a non-trivial generator expression is used, the
-``INSTALL_PREFIX`` expression may be used within the argument of an
-``INSTALL_INTERFACE`` expression.  It is a replacement marker which
-expands to the installation prefix when imported by a consuming project.
+自明でない generator 式を使う時、 ``INSTALL_INTERFACE`` 式の引数中で、
+``INSTALL_PREFIX`` 式を使うことができます。
+それは、それを消費するプロジェクトによってインポートされた時の、インストールプレフィックスに展開される置換マーカーです。
 
-Include directories usage requirements commonly differ between the build-tree
-and the install-tree.  The ``BUILD_INTERFACE`` and ``INSTALL_INTERFACE``
-generator expressions can be used to describe separate usage requirements
-based on the usage location.  Relative paths are allowed within the
-``INSTALL_INTERFACE`` expression and are interpreted relative to the
-installation prefix.  For example:
+インクルードディレクトリの使用要件は普通は、ビルドツリーとインストールツリーで異なります。
+``BUILD_INTERFACE`` and ``INSTALL_INTERFACE`` generator 式を使って、その使用位置に基づく別々の使用要件を記述することができます。
+``INSTALL_INTERFACE`` 式内で、相対パスを使うことができ、それは、インストールプレフィックスに相対的に評価されます。
+例えば：
 
 .. code-block:: cmake
 
@@ -661,9 +653,9 @@ installation prefix.  For example:
     $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/$<CONFIG>/generated>
   )
 
-Two convenience APIs are provided relating to include directories usage
-requirements.  The :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` variable
-may be enabled, with an equivalent effect to:
+インクルードディレクトリ使用要件に関して、２つの便宜的 API が提供されています。
+:variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` 変数を有効にすると、
+全ての影響を受けるターゲットに対して、以下と同じ効果があります。
 
 .. code-block:: cmake
 
@@ -671,9 +663,8 @@ may be enabled, with an equivalent effect to:
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR};${CMAKE_CURRENT_BINARY_DIR}>
   )
 
-for each target affected.  The convenience for installed targets is
-an ``INCLUDES DESTINATION`` component with the :command:`install(TARGETS)`
-command:
+インストールされたターゲットに対する便宜的 API は、:command:`install(TARGETS)` コマンドにおける、
+``INCLUDES DESTINATION`` コンポーネントです。
 
 .. code-block:: cmake
 
@@ -683,9 +674,10 @@ command:
   install(EXPORT tgts ${other_args})
   install(FILES ${headers} DESTINATION include)
 
-This is equivalent to appending ``${CMAKE_INSTALL_PREFIX}/include`` to the
-:prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` of each of the installed
-:prop_tgt:`IMPORTED` targets when generated by :command:`install(EXPORT)`.
+これは、:command:`install(EXPORT)` が生成するインストールされた :prop_tgt:`IMPORTED` 
+ターゲットそれぞれに対して、
+``${CMAKE_INSTALL_PREFIX}/include`` を、
+:prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` に加えることと同じです。
 
 When the :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` of an
 :ref:`imported target <Imported targets>` is consumed, the entries in the
@@ -704,13 +696,10 @@ directory.
 Link Libraries and Generator Expressions
 ----------------------------------------
 
-Like build specifications, :prop_tgt:`link libraries <LINK_LIBRARIES>` may be
-specified with generator expression conditions.  However, as consumption of
-usage requirements is based on collection from linked dependencies, there is
-an additional limitation that the link dependencies must form a "directed
-acyclic graph".  That is, if linking to a target is dependent on the value of
-a target property, that target property may not be dependent on the linked
-dependencies:
+ビルド指定と同様に、generator 式の条件に、 :prop_tgt:`link libraries <LINK_LIBRARIES>` 
+を指定することができます。しかし、使用要件の消費は、リンクされた依存関係の集まりに基づきますから、
+リンク依存関係が「有向無循環グラフ」を作らなくてはいけないという余分の制限があります。
+つまり、ターゲットへのリンクが、ターゲット属性の値に依存するなら、そのターゲット属性はリンクされた依存関係に依存してはいけません。
 
 .. code-block:: cmake
 
@@ -725,11 +714,10 @@ dependencies:
   add_executable(exe1 exe1.cpp)
   target_link_libraries(exe1 lib1 lib3)
 
-As the value of the :prop_tgt:`POSITION_INDEPENDENT_CODE` property of
-the ``exe1`` target is dependent on the linked libraries (``lib3``), and the
-edge of linking ``exe1`` is determined by the same
-:prop_tgt:`POSITION_INDEPENDENT_CODE` property, the dependency graph above
-contains a cycle.  :manual:`cmake(1)` issues a diagnostic in this case.
+``exe1`` ターゲットの :prop_tgt:`POSITION_INDEPENDENT_CODE` 属性値はリンクされるライブラリ (``lib3``) 
+に依存し、``exe1`` をリンクするエッジは、同じ :prop_tgt:`POSITION_INDEPENDENT_CODE` によって決まるため、
+以上の依存関係グラフは循環を持ちます。
+:manual:`cmake(1)` はこの場合、診断メッセージを出します。
 
 .. _`Output Artifacts`:
 
