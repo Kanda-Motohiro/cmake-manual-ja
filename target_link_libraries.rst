@@ -78,17 +78,19 @@ Overview
   :ref:`IMPORTED library targets <Imported Targets>` を作成し、リンクすることで、
   configuration 規則ごとにより高度な粒度を達成できます。
 
-Items containing ``::``, such as ``Foo::Bar``, are assumed to be
-:ref:`IMPORTED <Imported Targets>` or :ref:`ALIAS <Alias Targets>` library
-target names and will cause an error if no such target exists.
-See policy :policy:`CMP0028`.
+``Foo::Bar`` のように、 ``::`` を含むアイテムは、
+:ref:`IMPORTED <Imported Targets>` or :ref:`ALIAS <Alias Targets>` 
+ライブラリターゲット名であると推測されます。そのようなターゲットが無いとエラーになります。
+:policy:`CMP0028` ポリシーを参照ください。
 
-Arguments to ``target_link_libraries`` may use "generator expressions"
-with the syntax ``$<...>``.  Note however, that generator expressions
-will not be used in OLD handling of :policy:`CMP0003` or :policy:`CMP0004`.
-See the :manual:`cmake-generator-expressions(7)` manual for available
-expressions.  See the :manual:`cmake-buildsystem(7)` manual for more on
-defining buildsystem properties.
+``target_link_libraries`` の引数は、 ``$<...>`` のシンタックスを持つ、
+「generator 式」を使うことができます。しかし、
+:policy:`CMP0003` or :policy:`CMP0004` の古い扱いでは、generator 式
+は使われないことに注意ください。
+使うことのできる式は、 :manual:`cmake-generator-expressions(7)` 
+マニュアルを参照ください。
+ビルドシステムの属性を定義することについてより詳しくは、
+:manual:`cmake-buildsystem(7)` マニュアルを参照ください。
 
 Libraries for a Target and/or its Dependents
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -99,13 +101,13 @@ Libraries for a Target and/or its Dependents
                         <PRIVATE|PUBLIC|INTERFACE> <item>...
                        [<PRIVATE|PUBLIC|INTERFACE> <item>...]...)
 
-The ``PUBLIC``, ``PRIVATE`` and ``INTERFACE`` keywords can be used to
-specify both the link dependencies and the link interface in one command.
-Libraries and targets following ``PUBLIC`` are linked to, and are made
-part of the link interface.  Libraries and targets following ``PRIVATE``
-are linked to, but are not made part of the link interface.  Libraries
-following ``INTERFACE`` are appended to the link interface and are not
-used for linking ``<target>``.
+``PUBLIC``, ``PRIVATE`` and ``INTERFACE`` キーワードを使って、
+一つのコマンドでリンク依存関係とリンクインタフェースの両方を指定することができます。
+``PUBLIC`` に続くライブラリとターゲットはリンクされ、リンクインタフェースの一部となります。
+``PRIVATE`` に続くライブラリとターゲットはリンクされますが、リンクインタフェースの一部には
+なりません。
+``INTERFACE`` に続くライブラリは、リンクインタフェースに加えられ、``<target>`` 
+をリンクするのには使われません。
 
 Libraries for both a Target and its Dependents
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -114,16 +116,17 @@ Libraries for both a Target and its Dependents
 
   target_link_libraries(<target> <item>...)
 
-Library dependencies are transitive by default with this signature.
-When this target is linked into another target then the libraries
-linked to this target will appear on the link line for the other
-target too.  This transitive "link interface" is stored in the
-:prop_tgt:`INTERFACE_LINK_LIBRARIES` target property and may be overridden
-by setting the property directly.  When :policy:`CMP0022` is not set to
-``NEW``, transitive linking is built in but may be overridden by the
-:prop_tgt:`LINK_INTERFACE_LIBRARIES` property.  Calls to other signatures
-of this command may set the property making any libraries linked
-exclusively by this signature private.
+このシグネチャにおいては、ライブラリの依存関係はデフォルトで推移的です。
+このターゲットが他のターゲットにリンクされる時、このターゲットにリンクされている
+ライブラリは、その他のターゲットのリンク行にも現れます。
+この推移的な「リンクインタフェース」は、
+:prop_tgt:`INTERFACE_LINK_LIBRARIES`  ターゲット属性に格納され、
+その属性を設定することでオーバライドすることができます。
+:policy:`CMP0022` が、 ``NEW`` に設定されていない時、推移的リンク機能はビルトインされて
+いますが、
+:prop_tgt:`LINK_INTERFACE_LIBRARIES`  属性によってオーバライドできます。
+このコマンドを別のシグネチャで呼ぶと、その属性を、そのシグネチャにおいてだけリンクされる全ての
+ライブラリをプライベートにするように設定することがあります。
 
 Libraries for a Target and/or its Dependents (Legacy)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
