@@ -733,10 +733,9 @@ Output Artifacts
 しかしこれらの式は、``OBJECT`` ライブラリには使えません。式が指す、そのライブラリが生成する、
 単一のファイルというものは無いからです。
 
-There are three kinds of output artifacts that may be build by targets
-as detailed in the following sections.  Their classification differs
-between DLL platforms and non-DLL platforms.  All Windows-based
-systems including Cygwin are DLL platforms.
+以下のセクションで詳しく述べるように、ターゲットが作成する出力結果は３種類あります。
+それらの分類は、DLL プラットフォームと DLL でないプラットフォームで異なります。
+全ての、 Windows ベースのシステムは、Cygwin を含めて、DLL プラットフォームです。
 
 .. _`Runtime Output Artifacts`:
 
@@ -777,19 +776,19 @@ Archive Output Artifacts
 
 ビルドシステムターゲットの *archive* 出力結果は以下のどれかです。
 
-* 静的ライブラリターゲットの静的ライブラリファイル (e.g. ``.lib`` or ``.a``) of a static
+* 静的ライブラリターゲットの静的ライブラリファイル (e.g. ``.lib`` or ``.a``) 
   これは、 ``STATIC`` オプション付きの :command:`add_library` コマンドで作られます。
 
-* On DLL platforms: the import library file (e.g. ``.lib``) of a shared
-  library target created by the :command:`add_library` command
-  with the ``SHARED`` option.  This file is only guaranteed to exist if
-  the library exports at least one unmanaged symbol.
+* DLL プラットフォーム： ``SHARED`` オプションのある、 :command:`add_library` 
+  コマンドで作成された共用ライブラリターゲットのインポートライブラリファイル
+  (e.g. ``.lib``)。このファイルは、そのライブラリが少なくても一つの unmanaged symbol
+  をエクスポートする時に限って、存在する保証があります。
 
-* On DLL platforms: the import library file (e.g. ``.lib``) of an
-  executable target created by the :command:`add_executable` command
-  when its :prop_tgt:`ENABLE_EXPORTS` target property is set.
+* DLL プラットフォーム： :command:`add_executable` の、
+  :prop_tgt:`ENABLE_EXPORTS` ターゲット属性が設定されている時、それが作成した実行可能ファイルターゲットのインポートライブラリ
+  (e.g. ``.lib``)。
 
-The :prop_tgt:`ARCHIVE_OUTPUT_DIRECTORY` and :prop_tgt:`ARCHIVE_OUTPUT_NAME`
+:prop_tgt:`ARCHIVE_OUTPUT_DIRECTORY` and :prop_tgt:`ARCHIVE_OUTPUT_NAME`
 ターゲット属性を使って、実行時の、ビルドツリー内でのアーカイブ出力結果の場所と名前を制御できます。
 
 Directory-Scoped Commands
@@ -852,11 +851,9 @@ with :prop_tgt:`IMPORTED` targets.
 Alias Targets
 -------------
 
-An ``ALIAS`` target is a name which may be used interchangeably with
-a binary target name in read-only contexts.  A primary use-case for ``ALIAS``
-targets is for example or unit test executables accompanying a library, which
-may be part of the same buildsystem or built separately based on user
-configuration.
+``ALIAS`` ターゲットは、リードオンリーのコンテキストで、バイナリターゲットの名前として使うことのできる名前です。
+``ALIAS`` ターゲットの主なユースケースは、ライブラリに付属する例あるいはユニットテスト実行可能ファイルです。
+それは、同じビルドシステムの一部であったり、ユーザの構成によって別にビルドされることがあるでしょう。
 
 .. code-block:: cmake
 
@@ -895,22 +892,23 @@ property from it:
 Interface Libraries
 -------------------
 
-An ``INTERFACE`` target has no :prop_tgt:`LOCATION` and is mutable, but is
-otherwise similar to an :prop_tgt:`IMPORTED` target.
+``INTERFACE`` ターゲットは、 :prop_tgt:`LOCATION` を持たず、変更可能です。
+しかしそれ以外は、 :prop_tgt:`IMPORTED` ターゲットと似ています。
 
-It may specify usage requirements such as
+それは、以下のような使用要件を指定できます。
 :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`,
 :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`,
 :prop_tgt:`INTERFACE_COMPILE_OPTIONS`,
 :prop_tgt:`INTERFACE_LINK_LIBRARIES`,
 :prop_tgt:`INTERFACE_SOURCES`,
 and :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE`.
-Only the ``INTERFACE`` modes of the :command:`target_include_directories`,
+``INTERFACE`` ライブラリに対しては、
+:command:`target_include_directories`,
 :command:`target_compile_definitions`, :command:`target_compile_options`,
-:command:`target_sources`, and :command:`target_link_libraries` commands
-may be used with ``INTERFACE`` libraries.
+:command:`target_sources`, and :command:`target_link_libraries` 
+の、 ``INTERFACE`` モードだけを使うことができます。
 
-A primary use-case for ``INTERFACE`` libraries is header-only libraries.
+``INTERFACE`` ライブラリの主なユースケースは、ヘッダだけのライブラリです。
 
 .. code-block:: cmake
 
@@ -923,8 +921,8 @@ A primary use-case for ``INTERFACE`` libraries is header-only libraries.
   add_executable(exe1 exe1.cpp)
   target_link_libraries(exe1 Eigen)
 
-Here, the usage requirements from the ``Eigen`` target are consumed and used
-when compiling, but it has no effect on linking.
+ここで、 ``Eigen`` ターゲットからの使用要件は、コンパイル時に消費され、
+使われますが、リンク時には何も影響を持ちません。
 
 Another use-case is to employ an entirely target-focussed design for usage
 requirements:
