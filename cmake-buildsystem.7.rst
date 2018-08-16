@@ -843,8 +843,8 @@ the scope of a cmake variable.
 It is also possible to define a ``GLOBAL`` :prop_tgt:`IMPORTED` target which is
 accessible globally in the buildsystem.
 
-See the :manual:`cmake-packages(7)` manual for more on creating packages
-with :prop_tgt:`IMPORTED` targets.
+:prop_tgt:`IMPORTED` ターゲットでパッケージを作ることについて詳しくは、
+:manual:`cmake-packages(7)`  マニュアルを参照ください。
 
 .. _`Alias Targets`:
 
